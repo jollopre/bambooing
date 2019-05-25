@@ -1,5 +1,5 @@
 RSpec.describe Bambooing do
-  it "has a version number" do
+  it 'has a version number' do
     expect(Bambooing::VERSION).not_to be nil
   end
   
@@ -39,7 +39,6 @@ RSpec.describe Bambooing do
       end
 
       result = described_class.configuration.x_csrf_token
-
       expect(result).to eq('wadus')
     end
 
@@ -49,8 +48,16 @@ RSpec.describe Bambooing do
       end
 
       result = described_class.configuration.session_id
-
       expect(result).to eq('wadus')
+    end
+
+    it 'sets employee_id' do
+      described_class.configure do |config|
+        config.employee_id = 1234
+      end
+
+      result = described_class.configuration.employee_id
+      expect(result).to eq(1234)
     end
   end
 end
