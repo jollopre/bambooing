@@ -1,6 +1,7 @@
 require 'logger'
 require 'bambooing/version'
 require 'bambooing/timesheet/clock/entry'
+require 'bambooing/support/date'
 
 module Bambooing
   class << self
