@@ -47,7 +47,7 @@ RSpec.describe Bambooing::Timesheet::Clock::Entry do
 
     context 'when an entry is received' do
       it 'saves it' do
-        stub_save
+        stub_save(request_body: [entry])
 
         result = described_class.save(entry)
 
@@ -57,7 +57,7 @@ RSpec.describe Bambooing::Timesheet::Clock::Entry do
       context 'when does not succeeds' do
         it 'logs status and body' do
           allow(Bambooing.logger).to receive(:error)
-          stub_save(status: 409, response_body: { message: "cannot add duplicate entry" })
+          stub_save(request_body: [entry], status: 409, response_body: { message: "cannot add duplicate entry" })
 
           result = described_class.save(entry)
 
@@ -66,12 +66,30 @@ RSpec.describe Bambooing::Timesheet::Clock::Entry do
       end
     end
 
-    def stub_save(status: 200, response_body: "")
+    context 'when multiple entries are received' do
+      let(:entries) do
+        [entry]
+      end
+      it 'saves them' do
+        stub_save(request_body: entries)
+
+        result = described_class.save(entries)
+
+        expect(result).to eq(true)
+      end
+
+      context 'when does not succeeds' do
+        it 'logs status and body' do
+          pending
+        end
+      end
+    end
+
+    def stub_save(request_body: [], status: 200, response_body: "")
       headers = { 'Content-type' => 'application/json;charset=UTF-8', 'Cookie' => "PHPSESSID=#{session_id}", 'X-Csrf-Token' => x_csrf_token }
+      body = { entries: request_body }.to_json
 
-      body = { entries: [{ id: nil, trackingId: nil, employeeId: employee_id, date: entry.date, start: entry.start, end: entry.end, note: nil }]}
-
-      stub_request(:post, 'https://flywire.bamboohr.com/timesheet/clock/entries').with(body: body.to_json, headers: headers).to_return(status: status, body: response_body.to_json, headers: {})
+      stub_request(:post, 'https://flywire.bamboohr.com/timesheet/clock/entries').with(body: body, headers: headers).to_return(status: status, body: response_body.to_json, headers: {})
     end
   end
 end

@@ -32,7 +32,8 @@ module Bambooing
             request['Content-type'] = 'application/json;charset=UTF-8'
             request['x-csrf-token'] = Bambooing.configuration.x_csrf_token
             request['cookie'] = "PHPSESSID=#{Bambooing.configuration.session_id}"
-            request.body = { entries: [arg] }.to_json
+            entries = arg.respond_to?(:map) ? arg : [arg]
+            request.body = { entries: entries }.to_json
 
             response = http.request(request)
 
