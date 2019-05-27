@@ -80,7 +80,7 @@ RSpec.describe Bambooing::Timesheet::Clock::Entry do
 
       context 'when does not succeeds' do
         it 'logs status and body' do
-          pending
+          pending('TODO shared expect')
         end
       end
     end
