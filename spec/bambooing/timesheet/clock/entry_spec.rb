@@ -1,5 +1,3 @@
-require 'bambooing/timesheet/clock/entry'
-
 RSpec.describe Bambooing::Timesheet::Clock::Entry do
   let(:entry) do
     { id: 1, tracking_id: 1, employee_id: 1, date: '2019-05-25', start: '8:30', end: '13:30', note: 'a note' }

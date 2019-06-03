@@ -1,6 +1,7 @@
 require 'logger'
 require 'bambooing/version'
 require 'bambooing/timesheet/clock/entry'
+require 'bambooing/timesheet/clock/entry/factory'
 require 'bambooing/support/date'
 require 'bambooing/support/time'
 
