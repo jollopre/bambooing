@@ -4,30 +4,31 @@ module Bambooing
   module Support
     class Time
       class << self
-        ONE_MINUTE_SECONDS = 60.freeze
-        ONE_HOUR_MINUTES = 60.freeze
-        ONE_HOUR_SECONDS = ONE_HOUR_MINUTES*ONE_MINUTE_SECONDS.freeze
-        MAX_BREAK_MINUTES = ONE_HOUR_MINUTES
+        SECONDS_PER_MINUTE = 60.freeze
+        MINUTES_PER_HOUR = 60.freeze
+        SECONDS_PER_HOUR = MINUTES_PER_HOUR*SECONDS_PER_MINUTE.freeze
+        MAX_BREAK_MINUTES = MINUTES_PER_HOUR
 
-        def rand_work(date: nil, hours:, start_hour:, breaks:)
-          today = date || ::Date.today
-          periods = []
+        def rand_work(date: nil, hours:, starting_hour:, breaks:)
+          day = date || ::Date.today
+          seconds_per_period = hours/(breaks + 1.0) * SECONDS_PER_HOUR
 
-          seconds_per_period = hours/(breaks + 1.0) * ONE_HOUR_SECONDS
-          start = ::Time.new(today.year, today.mon, today.day, start_hour, Random.rand(MAX_BREAK_MINUTES), 0)
-          _end = ::Time.at(start.to_i + seconds_per_period)
-          periods << { start: start, end: _end }
+          start = ::Time.new(day.year, day.mon, day.day, starting_hour, Random.rand(MAX_BREAK_MINUTES), 0)
+          periods = [{
+            start: start,
+            end: ::Time.at(start.to_i + seconds_per_period)
+          }]
 
-          (0..breaks).reduce(periods) do |acc, i|
-            if i+1 <= breaks
-              period = acc[i]
-              start = ::Time.at(period[:end].to_i + Random.rand(MAX_BREAK_MINUTES)*ONE_MINUTE_SECONDS)
-              next_period = {
-                start: start,
-                end: ::Time.at(start.to_i + seconds_per_period)
-              }
-              acc[i+1] = next_period
-            end
+          (1..breaks).reduce(periods) do |acc, i|
+            period = acc[i-1]
+
+            start = ::Time.at(period[:end].to_i + Random.rand(MAX_BREAK_MINUTES)*SECONDS_PER_MINUTE)
+            next_period = {
+              start: start,
+              end: ::Time.at(start.to_i + seconds_per_period)
+            }
+            acc[i] = next_period
+
             acc
           end
         end
