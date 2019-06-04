@@ -19,7 +19,17 @@ module Bambooing
         end
 
         def to_json(opts = nil)
-          { 'id' => id, 'trackingId' => tracking_id, 'employeeId' => employee_id, 'date' => date, 'start' => start, 'end' => @end, 'note' => note }.to_json
+          { 'id' => id, 'trackingId' => tracking_id, 'employeeId' => employee_id, 'date' => date.to_s, 'start' => format_start, 'end' => format_end, 'note' => note }.to_json
+        end
+
+        private
+
+        def format_start
+          start.strftime('%H:%M')
+        end
+
+        def format_end
+          @end.strftime('%H:%M')
         end
 
         class << self

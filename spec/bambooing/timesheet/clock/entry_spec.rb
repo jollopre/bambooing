@@ -1,6 +1,9 @@
 RSpec.describe Bambooing::Timesheet::Clock::Entry do
+  let(:date) { Date.new(2019,05,25) }
+  let(:start) { Time.new(date.year, date.month, date.day, 8, 30) }
+  let(:_end) { Time.new(date.year, date.month, date.day, 13, 30) }
   let(:entry) do
-    { id: 1, tracking_id: 1, employee_id: 1, date: '2019-05-25', start: '8:30', end: '13:30', note: 'a note' }
+    { id: 1, tracking_id: 1, employee_id: 1, date: date, start: start, end: _end, note: 'a note' }
   end
 
   describe '.initialize' do
@@ -10,9 +13,9 @@ RSpec.describe Bambooing::Timesheet::Clock::Entry do
       expect(result.id).to eq(1)
       expect(result.tracking_id).to eq(1)
       expect(result.employee_id).to eq(1)
-      expect(result.date).to eq('2019-05-25')
-      expect(result.start).to eq('8:30')
-      expect(result.end).to eq('13:30')
+      expect(result.date).to eq(date)
+      expect(result.start).to eq(start)
+      expect(result.end).to eq(_end)
       expect(result.note).to eq('a note')
     end
   end
@@ -23,7 +26,7 @@ RSpec.describe Bambooing::Timesheet::Clock::Entry do
 
       result = an_entry.to_json
 
-      expect(result).to eq('{"id":1,"trackingId":1,"employeeId":1,"date":"2019-05-25","start":"8:30","end":"13:30","note":"a note"}')
+      expect(result).to eq('{"id":1,"trackingId":1,"employeeId":1,"date":"2019-05-25","start":"08:30","end":"13:30","note":"a note"}')
     end
   end
 
@@ -32,7 +35,7 @@ RSpec.describe Bambooing::Timesheet::Clock::Entry do
     let(:session_id) { 'a_session_id' }
     let(:employee_id) { 111 }
     let(:entry) do
-      described_class.new(date: '2019-05-26', start: '8:30', end: '13:30')
+      described_class.new(date: date, start: start, end: _end)
     end
 
     before do
@@ -57,7 +60,7 @@ RSpec.describe Bambooing::Timesheet::Clock::Entry do
           allow(Bambooing.logger).to receive(:error)
           stub_save(request_body: [entry], status: 409, response_body: { message: "cannot add duplicate entry" })
 
-          result = described_class.save(entry)
+          described_class.save(entry)
 
           expect(Bambooing.logger).to have_received(:error).with(/status: 409, body: {"message":/)
         end
@@ -78,7 +81,12 @@ RSpec.describe Bambooing::Timesheet::Clock::Entry do
 
       context 'when does not succeeds' do
         it 'logs status and body' do
-          pending('TODO shared expect')
+          allow(Bambooing.logger).to receive(:error)
+          stub_save(request_body: entries, status: 409, response_body: { message: "cannot add duplicate entry" })
+
+          described_class.save(entry)
+
+          expect(Bambooing.logger).to have_received(:error).with(/status: 409, body: {"message":/)
         end
       end
     end
