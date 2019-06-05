@@ -12,4 +12,8 @@ RSpec.configure do |config|
   config.expect_with :rspec do |c|
     c.syntax = :expect
   end
+
+  config.define_derived_metadata(:file_path => %r{/spec/tasks/}) do |metadata|
+    metadata[:type] = :task
+  end
 end
