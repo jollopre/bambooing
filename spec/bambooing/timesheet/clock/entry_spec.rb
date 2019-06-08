@@ -1,4 +1,8 @@
+require 'support/configuration_shared_context'
+
 RSpec.describe Bambooing::Timesheet::Clock::Entry do
+  include_context 'configuration'
+
   let(:date) { Date.new(2019,05,25) }
   let(:start) { Time.new(date.year, date.month, date.day, 8, 30) }
   let(:_end) { Time.new(date.year, date.month, date.day, 13, 30) }
@@ -31,19 +35,8 @@ RSpec.describe Bambooing::Timesheet::Clock::Entry do
   end
 
   describe '.save' do
-    let(:x_csrf_token) { 'a_token' }
-    let(:session_id) { 'a_session_id' }
-    let(:employee_id) { 111 }
     let(:entry) do
       described_class.new(date: date, start: start, end: _end)
-    end
-
-    before do
-      Bambooing.configure do |config|
-        config.x_csrf_token = x_csrf_token
-        config.session_id = session_id
-        config.employee_id = employee_id
-      end
     end
 
     context 'when an entry is received' do
@@ -92,7 +85,7 @@ RSpec.describe Bambooing::Timesheet::Clock::Entry do
     end
 
     def stub_save(request_body: [], status: 200, response_body: "")
-      headers = { 'Content-type' => 'application/json;charset=UTF-8', 'Cookie' => "PHPSESSID=#{session_id}", 'X-Csrf-Token' => x_csrf_token }
+      headers = { 'Content-type' => 'application/json;charset=UTF-8', 'Cookie' => "PHPSESSID=a_session_id", 'X-Csrf-Token' => 'a_secret' }
       body = { entries: request_body }.to_json
 
       stub_request(:post, 'https://flywire.bamboohr.com/timesheet/clock/entries').with(body: body, headers: headers).to_return(status: status, body: response_body.to_json, headers: {})

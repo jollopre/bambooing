@@ -1,9 +1,8 @@
+require 'support/configuration_shared_context'
+
 RSpec.describe Bambooing::Timesheet::Clock::Entry::Factory do
-  before do
-    Bambooing.configure do |config|
-      config.employee_id = '1234'
-    end
-  end
+  include_context 'configuration'
+
   describe '.create_current_weekdays' do
     it 'returns entries for current weekdays' do
       result = described_class.create_current_weekdays

@@ -59,5 +59,50 @@ RSpec.describe Bambooing do
       result = described_class.configuration.employee_id
       expect(result).to eq(1234)
     end
+
+    context 'config.dry_run_mode' do
+      it 'sets dry_run_mode' do
+        described_class.configure do |config|
+          config.dry_run_mode = false
+        end
+
+        result = described_class.configuration.dry_run_mode
+        expect(result).to eq(false)
+      end
+
+      context "when dry_run_mode is set to 'true'" do
+        it 'returns true' do
+          described_class.configure do |config|
+            config.dry_run_mode = 'true'
+          end
+
+          result = described_class.configuration.dry_run_mode
+          expect(result).to eq(true)
+        end
+      end
+
+      context 'when dry_run_mode is set to 1' do
+        context 'as an Integer' do
+          it 'returns true' do
+            described_class.configure do |config|
+              config.dry_run_mode = 1
+            end
+
+            result = described_class.configuration.dry_run_mode
+            expect(result).to eq(true)
+          end
+        end
+        context 'as a String' do
+          it 'returns true' do
+            described_class.configure do |config|
+              config.dry_run_mode = '1'
+            end
+
+            result = described_class.configuration.dry_run_mode
+            expect(result).to eq(true)
+          end
+        end
+      end
+    end
   end
 end

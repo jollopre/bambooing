@@ -26,5 +26,10 @@ module Bambooing
 
   class Configuration
     attr_accessor :x_csrf_token, :session_id, :employee_id
+    attr_reader :dry_run_mode
+
+    def dry_run_mode=(value)
+      @dry_run_mode = /true|1/.match?(value.to_s)
+    end
   end
 end

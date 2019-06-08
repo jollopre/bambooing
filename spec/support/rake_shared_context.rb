@@ -9,4 +9,8 @@ RSpec.shared_context 'rake' do
   before do
     Rake.application.rake_require(task_path)
   end
+
+  after(:each) do
+    task.reenable
+  end
 end

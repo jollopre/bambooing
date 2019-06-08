@@ -37,11 +37,12 @@ module Bambooing
             url = URI('https://flywire.bamboohr.com/timesheet/clock/entries')
             http = Net::HTTP.new(url.host, url.port)
             http.use_ssl = true
+            configuration = Bambooing.configuration
             
             request = Net::HTTP::Post.new(url)
             request['Content-type'] = 'application/json;charset=UTF-8'
-            request['x-csrf-token'] = Bambooing.configuration.x_csrf_token
-            request['cookie'] = "PHPSESSID=#{Bambooing.configuration.session_id}"
+            request['x-csrf-token'] = configuration.x_csrf_token
+            request['cookie'] = "PHPSESSID=#{configuration.session_id}"
             entries = arg.respond_to?(:map) ? arg : [arg]
             request.body = { entries: entries }.to_json
 
