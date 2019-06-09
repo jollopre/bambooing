@@ -10,6 +10,13 @@ RSpec.describe Bambooing::Timesheet::Clock::Entry::Factory do
       expect(result).to all(be_a(Bambooing::Timesheet::Clock::Entry))
     end
 
+    it 'every entry has same employee_id set' do
+      result = described_class.create_current_weekdays
+
+      employee_ids = result.map(&:employee_id)
+      expect(employee_ids).to all(eq('an_employee_id'))
+    end
+
     it 'every entry has date set' do
       result = described_class.create_current_weekdays
 

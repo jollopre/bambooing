@@ -1,5 +1,6 @@
 require 'logger'
 require 'bambooing/version'
+require 'bambooing/configuration'
 require 'bambooing/timesheet/clock/entry'
 require 'bambooing/timesheet/clock/entry/factory'
 require 'bambooing/support/date'
@@ -21,15 +22,6 @@ module Bambooing
         @logger = Logger.new(STDOUT)
       end
       @logger
-    end
-  end
-
-  class Configuration
-    attr_accessor :x_csrf_token, :session_id, :employee_id
-    attr_reader :dry_run_mode
-
-    def dry_run_mode=(value)
-      @dry_run_mode = /true|1/.match?(value.to_s)
     end
   end
 end

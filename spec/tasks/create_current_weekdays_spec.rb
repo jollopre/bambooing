@@ -8,13 +8,24 @@ RSpec.describe 'rake create_current_weekdays', type: :task do
   let(:entry_model) { Bambooing::Timesheet::Clock::Entry }
   let(:factory) { entry_model::Factory }
 
+  before do
+    allow(Bambooing::Configuration).to receive(:load_from_environment!)
+    allow(Bambooing.logger).to receive(:info)
+    allow(entry_model).to receive(:save)
+  end
+
   it 'generates entries for the current weekdays' do
     allow(factory).to receive(:create_current_weekdays).and_call_original
-    allow(entry_model).to receive(:save)
 
     task.invoke
 
     expect(factory).to have_received(:create_current_weekdays)
+  end
+
+  it 'logs the entries to be saved' do
+    task.invoke
+
+    expect(Bambooing.logger).to have_received(:info)
   end
 
   context 'when dry_run_mode is false' do
@@ -25,8 +36,6 @@ RSpec.describe 'rake create_current_weekdays', type: :task do
     end
 
     it 'saves entries generated in bamboo' do
-      allow(entry_model).to receive(:save)
-
       task.invoke
 
       expect(entry_model).to have_received(:save)
@@ -39,8 +48,6 @@ RSpec.describe 'rake create_current_weekdays', type: :task do
     end
 
     it 'it DOES NOT save entries generated in bamboo' do
-      allow(entry_model).to receive(:save)
-
       task.invoke
 
       expect(entry_model).not_to have_received(:save)

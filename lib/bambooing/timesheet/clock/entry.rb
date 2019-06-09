@@ -11,7 +11,7 @@ module Bambooing
         def initialize(args)
           @id = args[:id]
           @tracking_id = args[:tracking_id]
-          @employee_id = args[:employee_id] || Bambooing.configuration.employee_id
+          @employee_id = args[:employee_id]
           @date = args[:date]
           @start = args[:start]
           @end = args[:end]

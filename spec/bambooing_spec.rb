@@ -33,76 +33,14 @@ RSpec.describe Bambooing do
       expect(result).to eq(described_class)
     end
 
-    it 'sets x_csrf_token' do
+    it 'sets variables for its configuration' do
       described_class.configure do |config|
-        config.x_csrf_token = 'wadus'
+        config.employee_id = 'a_employee_id'
       end
 
-      result = described_class.configuration.x_csrf_token
-      expect(result).to eq('wadus')
-    end
+      employee_id = described_class.configuration.employee_id
 
-    it 'sets session_id' do
-      described_class.configure do |config|
-        config.session_id = 'wadus'
-      end
-
-      result = described_class.configuration.session_id
-      expect(result).to eq('wadus')
-    end
-
-    it 'sets employee_id' do
-      described_class.configure do |config|
-        config.employee_id = 1234
-      end
-
-      result = described_class.configuration.employee_id
-      expect(result).to eq(1234)
-    end
-
-    context 'config.dry_run_mode' do
-      it 'sets dry_run_mode' do
-        described_class.configure do |config|
-          config.dry_run_mode = false
-        end
-
-        result = described_class.configuration.dry_run_mode
-        expect(result).to eq(false)
-      end
-
-      context "when dry_run_mode is set to 'true'" do
-        it 'returns true' do
-          described_class.configure do |config|
-            config.dry_run_mode = 'true'
-          end
-
-          result = described_class.configuration.dry_run_mode
-          expect(result).to eq(true)
-        end
-      end
-
-      context 'when dry_run_mode is set to 1' do
-        context 'as an Integer' do
-          it 'returns true' do
-            described_class.configure do |config|
-              config.dry_run_mode = 1
-            end
-
-            result = described_class.configuration.dry_run_mode
-            expect(result).to eq(true)
-          end
-        end
-        context 'as a String' do
-          it 'returns true' do
-            described_class.configure do |config|
-              config.dry_run_mode = '1'
-            end
-
-            result = described_class.configuration.dry_run_mode
-            expect(result).to eq(true)
-          end
-        end
-      end
+      expect(employee_id).to eq('a_employee_id')
     end
   end
 end
