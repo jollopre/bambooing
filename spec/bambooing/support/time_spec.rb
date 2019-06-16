@@ -1,3 +1,5 @@
+require 'spec_helper'
+
 RSpec.describe Bambooing::Support::Time do
   describe '.rand_work' do
     let(:hours) { 8 }

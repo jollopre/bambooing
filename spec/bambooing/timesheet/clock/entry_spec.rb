@@ -1,3 +1,4 @@
+require 'spec_helper'
 require 'support/configuration_shared_context'
 
 RSpec.describe Bambooing::Timesheet::Clock::Entry do

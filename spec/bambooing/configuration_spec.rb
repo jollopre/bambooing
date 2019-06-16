@@ -1,3 +1,6 @@
+require 'spec_helper'
+require 'bambooing/configuration'
+
 RSpec.describe Bambooing::Configuration do
   describe '#dry_run_mode=' do
     let(:configuration) { described_class.new }

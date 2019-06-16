@@ -1,3 +1,4 @@
+require 'spec_helper'
 require 'support/rake_shared_context'
 require 'support/configuration_shared_context'
 

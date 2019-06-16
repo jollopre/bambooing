@@ -1,3 +1,5 @@
+require 'spec_helper'
+
 RSpec.shared_context 'configuration' do
   before(:each) do
     Bambooing.configure do |config|

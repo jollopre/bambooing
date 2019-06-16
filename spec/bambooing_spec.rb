@@ -1,3 +1,5 @@
+require 'spec_helper'
+
 RSpec.describe Bambooing do
   it 'has a version number' do
     expect(Bambooing::VERSION).not_to be nil

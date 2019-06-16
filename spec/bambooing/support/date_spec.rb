@@ -1,3 +1,4 @@
+require 'spec_helper'
 require 'timecop'
 
 RSpec.describe Bambooing::Support::Date do
