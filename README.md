@@ -1,8 +1,29 @@
 # Bambooing
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/bambooing`. To experiment with that code, run `bin/console` for an interactive prompt.
+Welcome to bambooing, a gem to track bamboo time hassle free! This gem is addressed to people who forgets to clock-(in|out) during work hours.
 
-TODO: Delete this and the text above, and describe your gem
+## Usage
+
+If you have docker installed on your machine, please run the following command:
+```bash
+make create_current_weekdays
+```
+
+This will add entries in Bamboo for the current week. These entries will consist of 8 hours per day with 2 breaks of 0-30 minutes, summing a total of 40 weekly hours. Note, it is needed to pass valid values for the configuration.env file (e.g. csrf_token, session_id or employee_id)
+
+## Test
+
+```bash
+make test
+```
+
+## Development
+
+```bash
+make devel
+```
+
+This will create an image and run a container to play/develop further features in bambooing. Then, run `bundle exec rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
 
 ## Installation
 
@@ -20,22 +41,9 @@ Or install it yourself as:
 
     $ gem install bambooing
 
-## Usage
-
-TODO: Write usage instructions here
-
-## Development
-
-```bash
-docker run -it --rm -v $PWD/:/usr/src -w /usr/src ruby bash
-```
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
-
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
-
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/bambooing. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
+Bug reports and pull requests are welcome on GitHub at https://github.com/jollopre/bambooing. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
 
 ## License
 
