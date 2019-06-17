@@ -89,7 +89,7 @@ RSpec.describe Bambooing::Timesheet::Clock::Entry do
       headers = { 'Content-type' => 'application/json;charset=UTF-8', 'Cookie' => "PHPSESSID=a_session_id", 'X-Csrf-Token' => 'a_secret' }
       body = { entries: request_body }.to_json
 
-      stub_request(:post, 'https://flywire.bamboohr.com/timesheet/clock/entries').with(body: body, headers: headers).to_return(status: status, body: response_body.to_json, headers: {})
+      stub_request(:post, "#{Bambooing.configuration.host}/timesheet/clock/entries").with(body: body, headers: headers).to_return(status: status, body: response_body.to_json, headers: {})
     end
   end
 end

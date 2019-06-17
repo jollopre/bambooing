@@ -38,12 +38,14 @@ RSpec.describe Bambooing::Configuration do
   end
 
   describe '.load_from_environment' do
+    let!(:host) { ENV['BAMBOOING_HOST'] }
     let!(:x_csrf_token) { ENV['BAMBOOING_X_CSRF_TOKEN'] }
     let!(:session_id) { ENV['BAMBOOING_SESSION_ID'] }
     let!(:employee_id) { ENV['BAMBOOING_EMPLOYEE_ID'] }
     let!(:dry_run_mode) { ENV['BAMBOOING_DRY_RUN_MODE'] }
 
     it 'sets every configuration variable to its corresponding environment variable' do
+      ENV['BAMBOOING_HOST'] = 'https://my_company.bamboohr.com'
       ENV['BAMBOOING_X_CSRF_TOKEN'] = 'a_csrf_token'
       ENV['BAMBOOING_SESSION_ID'] = 'a_session_id'
       ENV['BAMBOOING_EMPLOYEE_ID'] = 'a_employee_id'
@@ -52,6 +54,7 @@ RSpec.describe Bambooing::Configuration do
       described_class.load_from_environment!
 
       configuration = Bambooing.configuration
+      expect(configuration.host).to eq('https://my_company.bamboohr.com')
       expect(configuration.x_csrf_token).to eq('a_csrf_token')
       expect(configuration.session_id).to eq('a_session_id')
       expect(configuration.employee_id).to eq('a_employee_id')
@@ -59,6 +62,7 @@ RSpec.describe Bambooing::Configuration do
     end
 
     after(:each) do
+      ENV['BAMBOOING_HOST'] = host
       ENV['BAMBOOING_X_CSRF_TOKEN'] = x_csrf_token
       ENV['BAMBOOING_SESSION_ID'] = session_id
       ENV['BAMBOOING_EMPLOYEE_ID'] = employee_id

@@ -34,10 +34,11 @@ module Bambooing
 
         class << self
           def save(arg)
-            url = URI('https://flywire.bamboohr.com/timesheet/clock/entries')
+            configuration = Bambooing.configuration
+
+            url = URI("#{configuration.host}/timesheet/clock/entries")
             http = Net::HTTP.new(url.host, url.port)
             http.use_ssl = true
-            configuration = Bambooing.configuration
             
             request = Net::HTTP::Post.new(url)
             request['Content-type'] = 'application/json;charset=UTF-8'

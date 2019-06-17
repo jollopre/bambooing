@@ -1,6 +1,6 @@
 module Bambooing
   class Configuration
-    attr_accessor :x_csrf_token, :session_id, :employee_id
+    attr_accessor :host, :x_csrf_token, :session_id, :employee_id
     attr_reader :dry_run_mode
 
     def dry_run_mode=(value)
@@ -10,6 +10,7 @@ module Bambooing
     class << self
       def load_from_environment!
         Bambooing.configure do |config|
+          config.host = ENV.fetch('BAMBOOING_HOST', '')
           config.x_csrf_token = ENV.fetch('BAMBOOING_X_CSRF_TOKEN', '')
           config.session_id = ENV.fetch('BAMBOOING_SESSION_ID', '')
           config.employee_id = ENV.fetch('BAMBOOING_EMPLOYEE_ID', '')
