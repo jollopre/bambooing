@@ -11,6 +11,18 @@ make create_current_weekdays
 
 This will add entries in Bamboo for the current week. These entries will consist of 8 hours per day with 2 breaks of 0-30 minutes, summing a total of 40 weekly hours. Note, it is needed to pass valid values for the configuration.env file (e.g. csrf_token, session_id or employee_id)
 
+## Getting your credentials
+
+You will need to open your bamboo account on a browser and then execute the following commands to read your CSRF Token and Employee ID:
+```js
+console.log('Employee id:', currentlyEditingEmployeeId);
+console.log('CSRF token:', CSRF_TOKEN);
+```
+
+For the Session ID, you will have to use the browser's develpoment tools to find the value for the cookie named 'PHPSESSID' 
+
+ > Notice that if `BAMBOOING_DRY_RUN_MODE` is enabled, the times will be generated but will **not** be uploaded to bamboo, you have to disable it if you want to upload the times.
+
 ## Test
 
 ```bash
