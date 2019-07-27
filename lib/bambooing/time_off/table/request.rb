@@ -7,7 +7,7 @@ module Bambooing
     module Table
       class Request
         attr_accessor :id, :employee_id, :start, :end, :status, :type_id
-        TYPES = { pto: 77 }.freeze
+        TYPES = { pto: '77' }.freeze
 
         def initialize(args)
           @id = args[:id]
@@ -33,27 +33,32 @@ module Bambooing
 
             response = http.request(request)
 
-            if response.code == "200"
-              body = JSON.parse(response.body)
-              unless body['success'] == 'true'
-                Bambooing.logger.error("status: #{response.code}, body: #{body.to_json}")
-                return []
-              end
+            return handle_error(response) unless success?(response)
 
-              pto_requests = body['requests'].select do |_, value|
-                value['timeOffTypeId'] == TYPES[:pto]
-              end
-              pto_requests.reduce([]) do |acc, (_,value)|
-                acc << new(type_id: value['timeOffTypeId'])
-                acc
-              end
+            body = JSON.parse(response.body)
+            pto_requests = body['requests'].select do |_, value|
+              value['timeOffTypeId'] == TYPES[:pto]
+            end
+            pto_requests.reduce([]) do |acc, (_,value)|
+              acc << new(id: value['id'], employee_id: value['employeeId'], start: Date.parse(value['startYmd']), end: Date.parse(value['endYmd']), status: value['status'], type_id: value['timeOffTypeId'])
+              acc
             end
           end
 
           private
 
-          def employee_id
-            Bambooing.configuration.employee_id
+          def handle_error(response)
+            Bambooing.logger.error("status: #{response.code}, body: #{response.body}")
+            []
+          end
+
+          def success?(response)
+            response.code == '200' && success_body?(response)
+          end
+
+          def success_body?(response)
+            body = JSON.parse(response.body)
+            body['success']
           end
         end
       end

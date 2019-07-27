@@ -36,8 +36,10 @@ RSpec.describe Bambooing::TimeOff::Table::Request do
     end
     let(:response_body) do
       {
+        success: true,
         requests: {
-          1 => { id: id, employee_id: employee_id, startYmd: '2019-07-23', endYmd: '2019-07-25', timeOffTypeId: 77, status: 'approved' }
+          1 => { id: 1, employeeId: employee_id, startYmd: '2019-07-23', endYmd: '2019-07-25', timeOffTypeId: '77', status: 'approved' },
+          2 => { id: 2, employeeId: employee_id, startYmd: '2019-07-23', endYmd: '2019-07-25', timeOffTypeId: '78', status: 'approved' }
         }
       }
     end
@@ -47,12 +49,21 @@ RSpec.describe Bambooing::TimeOff::Table::Request do
 
       result = described_class.find_by_pto(employee_id: employee_id,year: 2019)
 
+      expect(result).to all(have_attributes(id: kind_of(Numeric), employee_id: employee_id, start: kind_of(Date), end: kind_of(Date), status: kind_of(String)))
+    end
+
+    it 'selects requests whose type_id is pto' do
+      stub_get(params: params, status: 200, response_body: response_body)
+
+      result = described_class.find_by_pto(employee_id: employee_id,year: 2019)
+
+      expect(result.size).to eq(1)
       expect(result).to all(have_attributes(type_id: described_class::TYPES[:pto]))
     end
 
     context 'when does not succeeds' do
       let(:response_body) do
-        { success: 'false', error: 'wadus' }
+        { success: false, error: 'wadus' }
       end
 
       before do
@@ -67,21 +78,26 @@ RSpec.describe Bambooing::TimeOff::Table::Request do
         end
 
         it 'logs status and body' do
-          allow(Bambooing.logger).to receive(:error)
+          expect(Bambooing.logger).to receive(:error).with(/status: 200, body: {\"success\":false,\"error\":\"wadus\"}/)
 
           described_class.find_by_pto(employee_id: employee_id, year: 2019)
-
-          expect(Bambooing.logger).to have_received(:error).with(/status: 200, body: {\"success\":\"false\",\"error\":\"wadus\"}/)
         end
       end
 
-      context 'since 4XX or 5XX is received' do
+      context 'since code different from 200 is received' do
+        before do
+          stub_get(params: params, status: 400, response_body: {})
+        end
         it 'returns empty list' do
-          pending
+          result = described_class.find_by_pto(employee_id: employee_id, year: 2019)
+
+          expect(result).to eq([])
         end
 
         it 'logs status and body' do
-          pending
+          expect(Bambooing.logger).to receive(:error).with(/status: 400, body: {}/)
+
+          described_class.find_by_pto(employee_id: employee_id, year: 2019)
         end
       end
     end
