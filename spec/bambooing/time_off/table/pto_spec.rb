@@ -14,8 +14,9 @@ RSpec.describe Bambooing::TimeOff::Table::PTO do
         request_class.new(status: 'approved')
       ]
     end
+
     it 'every request status is approved' do
-      allow(described_class).to receive(:find_by_pto).and_return(requests)
+      allow(described_class).to receive(:where).with(employee_id: 1, type_id: 77, year: 2019).and_return(requests)
       result = described_class.approved(employee_id: 1, year: 2019)
 
       expect(result.size).to eq(1)

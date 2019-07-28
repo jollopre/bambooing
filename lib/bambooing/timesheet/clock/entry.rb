@@ -1,11 +1,10 @@
 require 'json'
-require 'uri'
-require 'net/http'
 
 module Bambooing
   module Timesheet
     module Clock
       class Entry
+        PATH = '/timesheet/clock/entries'.freeze
         attr_accessor :id, :tracking_id, :employee_id, :date, :start, :end, :note
 
         def initialize(args)
@@ -19,7 +18,11 @@ module Bambooing
         end
 
         def to_json(opts = nil)
-          { 'id' => id, 'trackingId' => tracking_id, 'employeeId' => employee_id, 'date' => date.to_s, 'start' => format_start, 'end' => format_end, 'note' => note }.to_json
+          to_h.to_json
+        end
+
+        def to_h
+          { id: id, trackingId: tracking_id, employeeId: employee_id, date: date.to_s, start: format_start, end: format_end, note: note }
         end
 
         private
@@ -34,24 +37,13 @@ module Bambooing
 
         class << self
           def save(arg)
-            configuration = Bambooing.configuration
-
-            url = URI("#{configuration.host}/timesheet/clock/entries")
-            http = Net::HTTP.new(url.host, url.port)
-            http.use_ssl = true
-            
-            request = Net::HTTP::Post.new(url)
-            request['Content-type'] = 'application/json;charset=UTF-8'
-            request['x-csrf-token'] = configuration.x_csrf_token
-            request['cookie'] = "PHPSESSID=#{configuration.session_id}"
             entries = arg.respond_to?(:map) ? arg : [arg]
-            request.body = { entries: entries }.to_json
+            params = { entries: entries.map(&:to_h) }
 
-            response = http.request(request)
-
-            return true if response.code == "200"
-
-            Bambooing.logger.error("status: #{response.code}, body: #{response.read_body}")
+            Client.post(path: PATH, params: params, headers: {})
+            true
+          rescue Client::ClientError
+            false
           end
         end
       end

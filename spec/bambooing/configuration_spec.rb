@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'bambooing/configuration'
 require_relative 'configuration/shared_example_for_boolean_writer'
 
 RSpec.describe Bambooing::Configuration do

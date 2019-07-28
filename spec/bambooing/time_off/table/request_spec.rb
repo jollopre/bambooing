@@ -9,6 +9,9 @@ RSpec.describe Bambooing::TimeOff::Table::Request do
   let(:start) { Date.new(2019,07,23) }
   let(:_end) { Date.new(2019,07,25) }
   let(:status) { 'approved' }
+  let(:type_id) { 77 }
+  let(:year) { 2019 }
+  let(:path) { "/time_off/table/requests" }
 
   describe '.initialize' do
     let(:request) do
@@ -26,86 +29,73 @@ RSpec.describe Bambooing::TimeOff::Table::Request do
     end
   end
 
-  describe '.find_by_pto' do
+  describe '.where' do
     let(:params) do
       {
-        employee_id: employee_id,
-        type: described_class::TYPES[:pto],
-        year: 2019
+        id: employee_id,
+        type: type_id,
+        year: year
       }
     end
-    let(:response_body) do
+    let(:payload) do
       {
         success: true,
         requests: {
-          1 => { id: 1, employeeId: employee_id, startYmd: '2019-07-23', endYmd: '2019-07-25', timeOffTypeId: '77', status: 'approved' },
-          2 => { id: 2, employeeId: employee_id, startYmd: '2019-07-23', endYmd: '2019-07-25', timeOffTypeId: '78', status: 'approved' }
+          "1": { id: 1, employeeId: employee_id, startYmd: '2019-07-23', endYmd: '2019-07-25', timeOffTypeId: type_id, status: 'approved' }
         }
       }
     end
 
     it 'returns a list of PTO requests by employee_id and year' do
-      stub_get(params: params, status: 200, response_body: response_body)
+      allow(Bambooing::Client).to receive(:get).with(path: path, params: params, headers: {}).and_return(payload)
 
-      result = described_class.find_by_pto(employee_id: employee_id,year: 2019)
-
-      expect(result).to all(have_attributes(id: kind_of(Numeric), employee_id: employee_id, start: kind_of(Date), end: kind_of(Date), status: kind_of(String)))
-    end
-
-    it 'selects requests whose type_id is pto' do
-      stub_get(params: params, status: 200, response_body: response_body)
-
-      result = described_class.find_by_pto(employee_id: employee_id,year: 2019)
+      result = described_class.where(employee_id: employee_id, type_id: type_id, year: year)
 
       expect(result.size).to eq(1)
-      expect(result).to all(have_attributes(type_id: described_class::TYPES[:pto]))
+
+      expect(result).to all(have_attributes(id: kind_of(Numeric), employee_id: employee_id, start: kind_of(Date), end: kind_of(Date), status: kind_of(String), type_id: type_id))
     end
 
-    context 'when does not succeeds' do
-      let(:response_body) do
-        { success: false, error: 'wadus' }
-      end
-
-      before do
-        stub_get(params: params, status: 200, response_body: response_body)
-      end
-
-      context 'since success is false within the response body payload' do
+    context 'when an error is raised' do
+      context 'since a response redirection is received' do
         it 'returns empty list' do
-          result = described_class.find_by_pto(employee_id: employee_id, year: 2019)
+          allow(Bambooing::Client).to receive(:get).with(path: path, params: params, headers: {}).and_raise(Bambooing::Client::Redirection)
+
+          result = described_class.where(employee_id: employee_id, type_id: type_id, year: year)
 
           expect(result).to eq([])
         end
-
-        it 'logs status and body' do
-          expect(Bambooing.logger).to receive(:error).with(/status: 200, body: {\"success\":false,\"error\":\"wadus\"}/)
-
-          described_class.find_by_pto(employee_id: employee_id, year: 2019)
-        end
       end
 
-      context 'since code different from 200 is received' do
-        before do
-          stub_get(params: params, status: 400, response_body: {})
-        end
+      context 'since there is a client error' do
         it 'returns empty list' do
-          result = described_class.find_by_pto(employee_id: employee_id, year: 2019)
+          allow(Bambooing::Client).to receive(:get).with(path: path, params: params, headers: {}).and_raise(Bambooing::Client::ClientError)
+
+          result = described_class.where(employee_id: employee_id, type_id: type_id, year: year)
 
           expect(result).to eq([])
         end
+      end
 
-        it 'logs status and body' do
-          expect(Bambooing.logger).to receive(:error).with(/status: 400, body: {}/)
+      context 'since there is a server error' do
+        it 'returns empty list' do
+          allow(Bambooing::Client).to receive(:get).with(path: path, params: params, headers: {}).and_raise(Bambooing::Client::ServerError)
 
-          described_class.find_by_pto(employee_id: employee_id, year: 2019)
+          result = described_class.where(employee_id: employee_id, type_id: type_id, year: year)
+
+          expect(result).to eq([])
         end
       end
-    end
 
-    def stub_get(params: {}, status: 200, response_body: '')
-      headers = { 'Content-type' => 'application/json;charset=UTF-8', 'Cookie' => "PHPSESSID=a_session_id", 'X-Csrf-Token' => 'a_secret' }
+      context 'since an unknown response is received' do
+        it 'returns empty list' do
+          allow(Bambooing::Client).to receive(:get).with(path: path, params: params, headers: {}).and_raise(Bambooing::Client::UnknownResponse)
 
-      stub_request(:get, "#{Bambooing.configuration.host}/time_off/table/requests?id=#{params[:employee_id]}&type=#{params[:type]}&year=#{params[:year]}").with(headers: headers).to_return(status: status, body: response_body.to_json, headers: {})
+          result = described_class.where(employee_id: employee_id, type_id: type_id, year: year)
+
+          expect(result).to eq([])
+        end
+      end
     end
   end
 end
