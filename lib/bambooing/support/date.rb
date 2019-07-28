@@ -26,6 +26,10 @@ module Bambooing
 
           days
         end
+
+        def cyear
+          ::Date.today.year
+        end
       end
     end
   end
