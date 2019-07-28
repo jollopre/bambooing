@@ -1,0 +1,13 @@
+curl -X GET 'https://flywire.bamboohr.com/time_off/table/requests?id=40950&type=77&year=2019'   -H 'Content-Type: application/json' -H 'Cookie: PHPSESSID=' -H 'x-csrf-token: '
+RESULT:
+
+type --> { id: 77, name: "PTO", unit: "days" }
+
+requests --> {
+  id: {
+    startYmd: "2019-07-11",
+    endYmd: "2019-07-16",
+    status: "approved"
+  },
+  ...
+}

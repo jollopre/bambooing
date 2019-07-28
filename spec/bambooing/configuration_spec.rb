@@ -1,40 +1,20 @@
 require 'spec_helper'
 require 'bambooing/configuration'
+require_relative 'configuration/shared_example_for_boolean_writer'
 
 RSpec.describe Bambooing::Configuration do
   describe '#dry_run_mode=' do
-    let(:configuration) { described_class.new }
+    let(:writer) { :dry_run_mode= }
+    let(:reader) { :dry_run_mode }
 
-    it 'sets dry_run_mode' do
-      configuration.dry_run_mode = false
+    it_behaves_like 'boolean writer'
+  end
 
-      expect(configuration.dry_run_mode).to eq(false)
-    end
+  describe '#exclude_time_off=' do
+    let(:writer) { :exclude_time_off= }
+    let(:reader) { :exclude_time_off }
 
-    context "when dry_run_mode is set to 'true'" do
-      it 'returns true' do
-        configuration.dry_run_mode = 'true'
-
-        expect(configuration.dry_run_mode).to eq(true)
-      end
-    end
-
-    context 'when dry_run_mode is set to 1' do
-      context 'as an Integer' do
-        it 'returns true' do
-          configuration.dry_run_mode = 1
-
-          expect(configuration.dry_run_mode).to eq(true)
-        end
-      end
-      context 'as a String' do
-        it 'returns true' do
-          configuration.dry_run_mode = '1'
-
-          expect(configuration.dry_run_mode).to eq(true)
-        end
-      end
-    end
+    it_behaves_like 'boolean writer'
   end
 
   describe '.load_from_environment' do
@@ -43,6 +23,7 @@ RSpec.describe Bambooing::Configuration do
     let!(:session_id) { ENV['BAMBOOING_SESSION_ID'] }
     let!(:employee_id) { ENV['BAMBOOING_EMPLOYEE_ID'] }
     let!(:dry_run_mode) { ENV['BAMBOOING_DRY_RUN_MODE'] }
+    let!(:exclude_time_off) { ENV['BAMBOOING_EXCLUDE_TIME_OFF'] }
 
     it 'sets every configuration variable to its corresponding environment variable' do
       ENV['BAMBOOING_HOST'] = 'https://my_company.bamboohr.com'
@@ -50,6 +31,7 @@ RSpec.describe Bambooing::Configuration do
       ENV['BAMBOOING_SESSION_ID'] = 'a_session_id'
       ENV['BAMBOOING_EMPLOYEE_ID'] = 'a_employee_id'
       ENV['BAMBOOING_DRY_RUN_MODE'] = 'true'
+      ENV['BAMBOOING_EXCLUDE_TIME_OFF'] = 'true'
 
       described_class.load_from_environment!
 
@@ -59,6 +41,7 @@ RSpec.describe Bambooing::Configuration do
       expect(configuration.session_id).to eq('a_session_id')
       expect(configuration.employee_id).to eq('a_employee_id')
       expect(configuration.dry_run_mode).to eq(true)
+      expect(configuration.exclude_time_off).to eq(true)
     end
 
     after(:each) do
@@ -67,6 +50,7 @@ RSpec.describe Bambooing::Configuration do
       ENV['BAMBOOING_SESSION_ID'] = session_id
       ENV['BAMBOOING_EMPLOYEE_ID'] = employee_id
       ENV['BAMBOOING_DRY_RUN_MODE'] = dry_run_mode
+      ENV['BAMBOOING_EXCLUDE_TIME_OFF'] = exclude_time_off
     end
   end
 end

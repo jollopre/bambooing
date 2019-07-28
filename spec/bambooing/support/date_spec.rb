@@ -22,4 +22,16 @@ RSpec.describe Bambooing::Support::Date do
       Timecop.return
     end
   end
+
+  describe '.cyear' do
+    before { Timecop.freeze(Date.new(2019,7,28)) }
+
+    it "returns today's year" do
+      result = described_class.cyear
+
+      expect(result).to eq(2019)
+    end
+
+    after { Timecop.return }
+  end
 end
