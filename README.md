@@ -52,6 +52,10 @@ And then execute:
 Or install it yourself as:
 
     $ gem install bambooing
+    
+## Code status
+
+[![Build Status](https://travis-ci.com/jollopre/bambooing.svg?branch=master)](https://travis-ci.com/jollopre/bambooing)
 
 ## Contributing
 
