@@ -1,7 +1,13 @@
 ---
-sudo: false
+sudo: require
+
 language: ruby
-cache: bundler
-rvm:
-  - 2.6.3
-before_install: gem install bundler -v 1.17.2
+
+services:
+  - docker
+
+install:
+  - make build_devel
+
+script:
+  - make test
