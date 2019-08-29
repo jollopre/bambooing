@@ -1,11 +1,11 @@
 require 'bambooing'
 
 namespace :bambooing do
-  desc 'creates entries in bamboo for the current weekdays'
-  task :create_current_weekdays do
+  desc 'creates entries in bamboo for the current month weekdays'
+  task :create_current_month_weekdays do
     Bambooing::Configuration.load_from_environment!
 
-    entries = entry_class::Factory.create_current_weekdays(employee_id: employee_id, exclude_time_off: exclude_time_off)
+    entries = entry_class::Factory.create_current_month_weekdays(employee_id: employee_id, exclude_time_off: exclude_time_off)
 
     Bambooing.logger.info(entries)
 

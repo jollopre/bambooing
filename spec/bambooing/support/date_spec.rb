@@ -18,9 +18,23 @@ RSpec.describe Bambooing::Support::Date do
       ])
     end
 
-    after do
-      Timecop.return
+    after { Timecop.return }
+  end
+
+  describe '.cmonth_weekdays' do
+    before do
+      Timecop.freeze(Date.new(2019,8,29))
     end
+
+    it 'returns the weekdays for the current month' do
+      result = described_class.cmonth_weekdays
+
+      mdays = [1,2,5,6,7,8,9,12,13,14,15,16,19,20,21,22,23,26,27,28,29,30]
+      expected_result = mdays.map { |mday| Date.new(2019,8,mday) }
+      expect(result).to eq(expected_result)
+    end
+
+    after { Timecop.return }
   end
 
   describe '.cyear' do

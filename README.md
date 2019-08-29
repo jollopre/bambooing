@@ -11,6 +11,11 @@ make create_current_weekdays
 
 This will add entries in Bamboo for the current week. These entries will consist of 8 hours per day with 2 breaks of 0-30 minutes, summing a total of 40 weekly hours. Note, it is needed to pass valid values for the configuration.env file (e.g. csrf_token, session_id or employee_id)
 
+If you are ever lazier, you can add entries in Bamboo for the current month, based on the same strategy that for the current week. Please run the following command:
+```bash
+make create_current_month_weekdays
+```
+
 ## Getting your credentials
 
 You will need to open your bamboo account on a browser and then execute the following commands to read your CSRF Token and Employee ID:

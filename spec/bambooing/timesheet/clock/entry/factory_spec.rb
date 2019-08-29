@@ -1,42 +1,15 @@
 require 'spec_helper'
 require 'timecop'
+require_relative 'shared_examples'
 
 RSpec.describe Bambooing::Timesheet::Clock::Entry::Factory do
   let(:employee_id) { 'an_employee_id' }
+  let(:pto_class) { Bambooing::TimeOff::Table::PTO }
+
   describe '.create_current_weekdays' do
-    it 'returns entries for current weekdays' do
-      result = described_class.create_current_weekdays(employee_id: employee_id)
+    let(:method) { :create_current_weekdays }
 
-      expect(result).to all(be_a(Bambooing::Timesheet::Clock::Entry))
-    end
-
-    it 'every entry has same employee_id set' do
-      result = described_class.create_current_weekdays(employee_id: employee_id)
-
-      employee_ids = result.map(&:employee_id)
-      expect(employee_ids).to all(eq('an_employee_id'))
-    end
-
-    it 'every entry has date set' do
-      result = described_class.create_current_weekdays(employee_id: employee_id)
-
-      dates = result.map(&:date)
-      expect(dates).to all(be_a(Date))
-    end
-
-    it 'every entry has start set' do
-      result = described_class.create_current_weekdays(employee_id: employee_id)
-
-      starts = result.map(&:start)
-      expect(starts).to all(be_a(Time))
-    end
-
-    it 'every entry has end set' do
-      result = described_class.create_current_weekdays(employee_id: employee_id)
-
-      ends = result.map(&:end)
-      expect(ends).to all(be_a(Time))
-    end
+    it_behaves_like 'entry collection'
 
     it '40 hours are worked' do
       entries = described_class.create_current_weekdays(employee_id: employee_id)
@@ -46,9 +19,6 @@ RSpec.describe Bambooing::Timesheet::Clock::Entry::Factory do
     end
 
     context 'when exclude_time_off is enabled' do
-      let(:pto_class) do
-        Bambooing::TimeOff::Table::PTO
-      end
       let(:requests) do
         [pto_class.new(start: Date.new(2019,7,22), end: Date.new(2019,7,23))]
       end
@@ -68,11 +38,48 @@ RSpec.describe Bambooing::Timesheet::Clock::Entry::Factory do
         Timecop.return
       end
     end
+  end
 
-    def seconds_worked_for(entries)
-      entries.reduce(0) do |acc, entry|
-        acc += entry.end.to_i - entry.start.to_i
+  describe '.create_current_month_weekdays' do
+    let(:method) { :create_current_month_weekdays }
+
+    it_behaves_like 'entry collection'
+
+    it '176 hours are worked' do
+      Timecop.freeze(Date.new(2019,8,30))
+
+      entries = described_class.create_current_month_weekdays(employee_id: employee_id)
+
+      elapsed_seconds = seconds_worked_for(entries)
+      expect(elapsed_seconds).to eq(176*60*60)
+      Timecop.return
+    end
+
+    context 'when exclude_time_off is enabled' do
+      let(:requests) do
+        [pto_class.new(start: Date.new(2019,8,1), end: Date.new(2019,8,2))]
       end
+      before do
+        Timecop.freeze(Date.new(2019,8,30))
+        allow(pto_class).to receive(:approved).and_return(requests)
+      end
+
+      it '160 hours are worked' do
+        entries = described_class.create_current_month_weekdays(employee_id: employee_id, exclude_time_off: true)
+
+        elapsed_seconds = seconds_worked_for(entries)
+        expect(elapsed_seconds).to eq(160*60*60)
+      end
+
+      after do
+        Timecop.return
+      end
+    end
+  end
+
+  def seconds_worked_for(entries)
+    entries.reduce(0) do |acc, entry|
+      acc += entry.end.to_i - entry.start.to_i
     end
   end
 end

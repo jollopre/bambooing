@@ -9,4 +9,6 @@ test:	build_devel
 devel:	build_devel
 	docker run --rm -it --env-file ${PWD}/configuration.env -v ${PWD}:/usr/src bambooing:devel bash
 create_current_weekdays:  build_release
-	docker run --rm --env-file ${PWD}/configuration.env bambooing:release bundle exec rake create_current_weekdays
+	docker run --rm --env-file ${PWD}/configuration.env bambooing:release bundle exec rake bambooing:create_current_weekdays
+create_current_month_weekdays:  build_release
+	docker run --rm --env-file ${PWD}/configuration.env bambooing:release bundle exec rake bambooing:create_current_month_weekdays
