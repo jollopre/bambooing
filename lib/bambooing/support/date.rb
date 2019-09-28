@@ -28,12 +28,13 @@ module Bambooing
         end
 
         def cmonth_weekdays
-          beginning_of_month = day = ::Date.today - ::Date.today.mday + 1
+          day = ::Date.today - ::Date.today.mday + 1
           end_of_month = ::Date.today.next_month - ::Date.today.next_month.mday
-          days = [beginning_of_month]
+          days = []
 
-          while (day = day.next_day) <= end_of_month
+          while day <= end_of_month
             days << day if WEEKDAYS.include?(day.wday)
+            day = day.next_day
           end
 
           days
