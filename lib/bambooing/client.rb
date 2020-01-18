@@ -1,5 +1,5 @@
 require 'net/http'
-require 'rack'
+require 'uri'
 require 'json'
 
 module Bambooing
@@ -58,7 +58,7 @@ module Bambooing
     end
 
     def to_query_param
-      Rack::Utils.build_query(params)
+      URI.encode_www_form(params)
     end
 
     def uri

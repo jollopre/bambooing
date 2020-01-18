@@ -18,7 +18,7 @@ RSpec.describe Bambooing::Client do
       { id: 1, type: 77, year: 2019 }
     end
     let(:query_params) do
-      "id=1&type=77&year=2019"
+      "id=#{params[:id]}&type=#{params[:type]}&year=#{params[:year]}"
     end
     let(:headers) do
       { foo: 'bar' }
@@ -186,7 +186,6 @@ RSpec.describe Bambooing::Client do
 
   def get_stub(headers: {}, params: {}, response: { status: 200, body: {}, headers: {}})
     headers = default_headers.merge(headers)
-    query_params = Rack::Utils.build_query(params)
 
     stub_request(:get, "#{host}#{path}?#{query_params}").with(headers: headers).to_return(status: response[:status], body: response[:body].to_json, headers: response[:headers])
   end
