@@ -8,7 +8,6 @@ module Bambooing
       WEEKDAYS = (1..5).freeze
       class << self
         def cweekdays
-          today = ::Date.today
           current_day = today
           days = []
           direction = :next_day
@@ -28,8 +27,8 @@ module Bambooing
         end
 
         def cmonth_weekdays
-          day = ::Date.today - ::Date.today.mday + 1
-          end_of_month = ::Date.today.next_month - ::Date.today.next_month.mday
+          day = today - today.mday + 1
+          end_of_month = today.next_month - today.next_month.mday
           days = []
 
           while day <= end_of_month
@@ -41,7 +40,14 @@ module Bambooing
         end
 
         def cyear
-          ::Date.today.year
+          today.year
+        end
+
+        private
+
+        def today
+          #::Date.new(2021,12,31)
+          ::Date.today
         end
       end
     end
