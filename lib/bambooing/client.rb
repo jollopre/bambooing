@@ -88,15 +88,19 @@ module Bambooing
         client_error_handler(response)
       when Net::HTTPServerError
         server_error_handler(response)
+      else
+        unknown_handler(response)
       end
     end
 
     def success_handler(response)
       return EMTPY_BODY if verb == :post
 
-      payload = JSON.parse(response.body, symbolize_names: true)
-
-      unknown_handler(response) unless payload[:success]
+      payload = JSON.parse(response.body, symbolize_names: true)      
+      
+      if payload.key?(:success)
+        unknown_handler(response) unless payload[:success]
+      end
 
       payload
     end
