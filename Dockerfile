@@ -1,13 +1,13 @@
-FROM ruby:2.6.3 as base
+FROM ruby:2.6.3 AS base
 
-ENV APP /usr/src
+ENV APP=/usr/src
 
 WORKDIR $APP
 
 COPY Gemfile bambooing.gemspec Rakefile $APP/
 COPY lib/bambooing/version.rb $APP/lib/bambooing/version.rb
 
-FROM base as devel
+FROM base AS devel
 
 COPY bin $APP/bin
 COPY lib $APP/lib
@@ -15,7 +15,7 @@ COPY spec $APP/spec
 
 RUN bundle install -j 10
 
-FROM base as release
+FROM base AS release
 
 COPY lib $APP/lib
 
