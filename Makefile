@@ -1,14 +1,29 @@
+.PHONY: build create_current_weekdays create_current_month_weekdays clean down install shell test up
+
 build:
-	docker build -t bambooing:base .
-build_devel:
-	docker build --target=devel -t bambooing:devel .
-build_release:
-	docker build --target=release -t bambooing:release .
-test:	build_devel
-	docker run -it --rm bambooing:devel bundle exec rake spec
-devel:	build_devel
-	docker run --rm -it --env-file ${PWD}/configuration.env -v ${PWD}:/usr/src bambooing:devel bash
-create_current_weekdays:  build_release
-	docker run --rm --env-file ${PWD}/configuration.env bambooing:release bundle exec rake bambooing:create_current_weekdays
-create_current_month_weekdays:  build_release
-	docker run --rm --env-file ${PWD}/configuration.env bambooing:release bundle exec rake bambooing:create_current_month_weekdays
+	docker build --no-cache -t bambooing:test .
+
+create_current_weekdays:
+	docker run --rm --name bambooing_week --env-file ${PWD}/configuration.env bambooing:test bundle exec rake bambooing:create_current_weekdays
+
+create_current_month_weekdays:
+	docker run --rm --name bambooing_month --env-file ${PWD}/configuration.env bambooing:test bundle exec rake bambooing:create_current_month_weekdays
+
+clean:
+	docker rm -f bambooing
+	docker rmi bambooing:test
+
+down:
+	docker rm -f bambooing
+
+install:
+	docker exec -it bambooing bundle install
+
+shell:
+	docker exec -it bambooing sh
+
+test:
+	docker run --rm --name bambooing_test bambooing:test bundle exec rspec
+
+up:
+	docker run --name bambooing -v ${PWD}:/opt --env-file ${PWD}/configuration.env -d bambooing:test tail -f /dev/null

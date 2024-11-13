@@ -1,6 +1,10 @@
 source "https://rubygems.org"
 
-git_source(:github) {|repo_name| "https://github.com/#{repo_name}" }
-
-# Specify your gem's dependencies in bambooing.gemspec
 gemspec
+
+group :development, :test do
+  gem "rake", "~> 13"
+  gem "rspec", "~> 3"
+  gem "webmock", "~> 3"
+  gem "timecop", "~> 0"
+end
