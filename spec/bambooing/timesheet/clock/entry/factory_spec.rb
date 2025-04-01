@@ -77,6 +77,38 @@ RSpec.describe Bambooing::Timesheet::Clock::Entry::Factory do
     end
   end
 
+  describe '.create_custom_dates_weekdays' do
+    let(:method) { :create_custom_dates_weekdays }
+    let(:start_date) { Date.new(2025,3,1) }
+    let(:end_date) { Date.new(2025,3,31) }
+    let(:requests) do
+      [pto_class.new(start: Date.new(2025,3,18), end: Date.new(2025,3,20))]
+    end
+
+    before do
+      Timecop.freeze(Date.new(2019,8,30))
+      allow(pto_class).to receive(:approved).and_return(requests)
+    end
+
+    it '168 hours are worked' do
+      entries = described_class.create_custom_dates_weekdays(employee_id: employee_id, start_date: start_date, end_date: end_date)
+      elapsed_seconds = seconds_worked_for(entries)
+      expect(elapsed_seconds).to eq(168*60*60)
+    end
+
+    context 'when exclude_time_off is enabled' do
+      it '144 hours are worked' do
+        entries = described_class.create_custom_dates_weekdays(employee_id: employee_id, start_date: start_date, end_date: end_date, exclude_time_off: true)
+        elapsed_seconds = seconds_worked_for(entries)
+        expect(elapsed_seconds).to eq(144*60*60)
+      end
+    end
+
+    after do
+      Timecop.return
+    end
+  end
+
   def seconds_worked_for(entries)
     entries.reduce(0) do |acc, entry|
       acc += entry.end.to_i - entry.start.to_i

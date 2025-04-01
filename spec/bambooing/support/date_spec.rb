@@ -48,4 +48,26 @@ RSpec.describe Bambooing::Support::Date do
 
     after { Timecop.return }
   end
+
+  describe '.weekdays_between' do
+    before do
+      Timecop.freeze(Date.new(2019,5,28))
+    end
+
+    it 'returns weekdays between two dates' do
+      start_date = Date.new(2019,5,27)
+      end_date = Date.new(2019,6,2)
+      result = described_class.weekdays_between(start_date: start_date, end_date: end_date)
+
+      expect(result).to eq([
+        Date.new(2019,5,27),
+        Date.new(2019,5,28),
+        Date.new(2019,5,29),
+        Date.new(2019,5,30),
+        Date.new(2019,5,31)
+      ])
+    end
+
+    after { Timecop.return }
+  end
 end

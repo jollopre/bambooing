@@ -16,6 +16,12 @@ module Bambooing
               generate_entries(days: cmonthdays, employee_id: employee_id)
             end
 
+            def create_custom_dates_weekdays(employee_id:, exclude_time_off: false, start_date:, end_date:)
+              days = Support::Date.weekdays_between(start_date: start_date, end_date: end_date)
+              days = exclude_time_off(days: days, employee_id: employee_id) if exclude_time_off
+              generate_entries(days: days, employee_id: employee_id)
+            end
+
             private
 
             def generate_entries(days:, employee_id:)

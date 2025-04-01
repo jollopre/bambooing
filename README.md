@@ -18,6 +18,11 @@ If you are ever lazier, you can add entries in Bamboo for the current month, bas
 make create_current_month_weekdays
 ```
 
+If you are ever ever lazie, you can add entries in Bamboo for days between specific dates (maybe two months? 😅), based on the same strategy that for the current month. Please run the following command:
+```bash
+make create_custom_dates_weekdays START_DATE="01/01/2025" END_DATE="31/03/2025"
+```
+
 ## Getting your credentials
 
 You will need to open your bamboo account on a browser and navigate to `My Info` tab. Execute the following commands to read your CSRF Token and Employee ID:

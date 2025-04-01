@@ -39,6 +39,18 @@ module Bambooing
           days
         end
 
+        def weekdays_between(start_date:, end_date:)
+          start_date = ::Date.parse(start_date) if start_date.is_a?(String)
+          end_date = ::Date.parse(end_date) if end_date.is_a?(String)
+          days = []
+          current_day = start_date
+          while current_day <= end_date
+            days << current_day if WEEKDAYS.include?(current_day.wday)
+            current_day = current_day.next_day
+          end
+          days
+        end
+
         def cyear
           today.year
         end

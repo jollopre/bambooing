@@ -9,6 +9,9 @@ create_current_weekdays:
 create_current_month_weekdays:
 	docker run --rm --name bambooing_month --env-file ${PWD}/configuration.env bambooing:test bundle exec rake bambooing:create_current_month_weekdays
 
+create_custom_dates_weekdays:
+	docker run --rm --name bambooing_custom --env-file ${PWD}/configuration.env bambooing:test bundle exec rake bambooing:create_custom_dates_weekdays[${START_DATE},${END_DATE}]
+
 clean:
 	docker rm -f bambooing
 	docker rmi bambooing:test
@@ -23,7 +26,7 @@ shell:
 	docker exec -it bambooing sh
 
 test:
-	docker run --rm --name bambooing_test bambooing:test bundle exec rspec
+	docker run --rm --name bambooing_test bambooing:test bundle exec rspec ${SPEC}
 
 up:
 	docker run --name bambooing -v ${PWD}:/opt --env-file ${PWD}/configuration.env -d bambooing:test tail -f /dev/null
