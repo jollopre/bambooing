@@ -35,6 +35,28 @@ For the Session ID, you will have to use the browser's develpoment tools to find
 
  > Notice that if `BAMBOOING_DRY_RUN_MODE` is enabled, the times will be generated but will **not** be uploaded to bamboo, you have to disable it if you want to upload the times.
 
+## Configuration Options
+
+The following environment variables can be set in your `configuration.env` file:
+
+- `BAMBOOING_HOST` - Your BambooHR URL (e.g., `https://yourcompany.bamboohr.com`)
+- `BAMBOOING_X_CSRF_TOKEN` - CSRF token from BambooHR
+- `BAMBOOING_SESSION_ID` - Session ID from BambooHR (PHPSESSID cookie)
+- `BAMBOOING_EMPLOYEE_ID` - Your employee ID
+- `BAMBOOING_DRY_RUN_MODE` - Set to `true` to test without uploading (default: `false`)
+- `BAMBOOING_EXCLUDE_TIME_OFF` - Set to `true` to exclude time off days (default: `false`)
+- `BAMBOOING_EXCLUDE_PTOS` - Set to `true` to exclude PTO days (default: `false`)
+- `BAMBOOING_EXCLUDE_DIGITAL_DISCONNECT_DAYS` - Set to `true` to exclude Digital Disconnect Days (default: `false`)
+
+### Time Off Exclusions
+
+When time off exclusions are enabled, the system will automatically skip creating time entries for:
+
+- **PTOs**: Paid Time Off requests that are approved
+- **Digital Disconnect Days**: Company-wide digital disconnect days (type 102) that are approved
+
+This ensures that you don't accidentally create time entries for days when you're not supposed to be working.
+
 ## Test
 
 ```bash

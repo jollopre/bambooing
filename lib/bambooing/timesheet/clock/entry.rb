@@ -38,6 +38,12 @@ module Bambooing
         class << self
           def save(arg)
             entries = arg.respond_to?(:map) ? arg : [arg]
+            
+            if entries.empty?
+              Bambooing.logger.info("No entries to save - all days were excluded")
+              return true
+            end
+            
             params = { entries: entries.map(&:to_h) }
 
             Client.post(path: PATH, params: params, headers: {})

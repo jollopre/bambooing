@@ -6,6 +6,8 @@ require 'bambooing/timesheet/clock/entry'
 require 'bambooing/timesheet/clock/entry/factory'
 require 'bambooing/time_off/table/request'
 require 'bambooing/time_off/table/pto'
+require 'bambooing/time_off/table/digital_disconnect_day'
+require 'bambooing/time_off/exclusion_service'
 require 'bambooing/support/date'
 require 'bambooing/support/time'
 

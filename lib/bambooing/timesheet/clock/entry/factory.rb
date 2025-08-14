@@ -36,7 +36,14 @@ module Bambooing
 
             def exclude_time_off(days:, employee_id:)
               year = Support::Date.cyear
-              requests = Bambooing::TimeOff::Table::PTO.approved(employee_id: employee_id, year: year)
+              config = Bambooing.configuration
+              
+              requests = TimeOff::ExclusionService.excluded_dates(
+                employee_id: employee_id,
+                year: year,
+                exclude_ptos: config.exclude_ptos,
+                exclude_digital_disconnect_days: config.exclude_digital_disconnect_days
+              )
 
               days.reject do |day|
                 requests.any? do |request|
