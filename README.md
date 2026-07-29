@@ -4,7 +4,12 @@ Welcome to bambooing, a gem to track bamboo time hassle free! This gem is addres
 
 ## Usage
 
-If you have docker installed on your machine, please run the following command:
+First, you need to build the gem:
+```bash
+make build
+```
+
+Then, if you have docker installed on your machine, please run the following command:
 ```bash
 make create_current_weekdays
 ```
